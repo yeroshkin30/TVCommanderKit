@@ -110,6 +110,29 @@ public class TVCommander: WebSocketDelegate {
         sendCommandOverWebSocket(command)
     }
 
+    public func mouseMove(x: Int, y: Int) {
+        guard isConnected else {
+            handleError(.remoteCommandNotConnectedToTV)
+            return
+        }
+        guard authStatus == .allowed else {
+            handleError(.remoteCommandAuthenticationStatusNotAllowed)
+            return
+        }
+
+        let params: [String: Any] = [
+            "Cmd": "Move",
+            "TypeOfRemote": "ProcessMouseDevice",
+            "Position": [
+                "x": x,
+                "y": y
+            ]
+        ]
+
+        let command = TVRemoteCommand(method: .control, params: params)
+        sendCommandOverWebSocket(command)
+    }
+
     private func createRemoteCommand(key: TVRemoteCommand.Params.ControlKey) -> TVRemoteCommand {
         let params = TVRemoteCommand.Params(cmd: .click, dataOfCmd: key, option: false, typeOfRemote: .remoteKey)
         return TVRemoteCommand(method: .control, params: params)
