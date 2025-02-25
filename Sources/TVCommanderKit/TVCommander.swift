@@ -125,12 +125,25 @@ public class TVCommander: WebSocketDelegate {
             "TypeOfRemote": "ProcessMouseDevice",
             "Position": [
                 "x": x,
-                "y": y
+                "y": y,
+                "Time": dateAsString()
+
             ]
         ]
+        let payload = ["method": "ms.remote.control", "params": params] as [String: Any]
+        let endodedParams = try? JSONSerialization.data(withJSONObject: payload)
 
-        let command = TVRemoteCommand(method: .control, params: params)
-        sendCommandOverWebSocket(command)
+        let paramsString = String(data: endodedParams!, encoding: .utf8)!
+
+        webSocket?.write(string: paramsString) { [weak self] in
+
+        }
+    }
+
+    func dateAsString() -> String {
+        let timestamp = Date().timeIntervalSince1970
+        let timestampString = String(format: "%.6f", timestamp)
+        return timestampString
     }
 
     private func createRemoteCommand(key: TVRemoteCommand.Params.ControlKey) -> TVRemoteCommand {
