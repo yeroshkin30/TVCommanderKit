@@ -93,7 +93,7 @@ public class TVCommander: WebSocketDelegate {
     }
 
     /// Send a text as text field input to the TV. Text will replace existing text in TV textfield.
-    public func sendText(_ text: String) {
+    public func sendText(_ text: String, submit: Bool = false) {
         guard isConnected else {
             handleError(.remoteCommandNotConnectedToTV)
             return
@@ -105,7 +105,12 @@ public class TVCommander: WebSocketDelegate {
 
         let base64Text = Data(text.utf8).base64EncodedString()
 
-        let params = TVRemoteCommand.Params(cmd: .textInput(base64Text), dataOfCmd: .base64, option: false, typeOfRemote: .inputString)
+        let params = TVRemoteCommand.Params(
+            cmd: .textInput(base64Text),
+            dataOfCmd: .base64,
+            option: false,
+            typeOfRemote: submit ? .inputEnd : .inputString
+        )
         let command = TVRemoteCommand(method: .control, params: params)
         sendCommandOverWebSocket(command)
     }
