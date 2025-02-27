@@ -237,6 +237,9 @@ public struct TVRemoteCommand: Encodable {
             case left = "KEY_LEFT"
             case right = "KEY_RIGHT"
             case enter = "KEY_ENTER"
+            case panelEnter = "KEY_PANEL_ENTER"
+            case idInput = "KEY_ID_INPUT"
+            case done = "KEY_DONE" // NOT SURE ITS working
             case returnKey = "KEY_RETURN"
             case channelUp = "KEY_CHUP"
             case channelDown = "KEY_CHDOWN"
@@ -271,6 +274,7 @@ public struct TVRemoteCommand: Encodable {
             case number8 = "KEY_8"
             case number9 = "KEY_9"
             case sourceTV = "KEY_DTV"
+            case tvMode = "KEY_TV"
             case sourceHDMI = "KEY_HDMI"
             case contents = "KEY_CONTENTS"
             case base64 = "base64" // Used for text input
