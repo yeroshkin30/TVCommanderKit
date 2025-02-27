@@ -172,7 +172,7 @@ public class TVCommander: WebSocketDelegate {
             return
         }
         webSocket?.write(string: commandStr) { [weak self] in
-            guard let self else { return }
+            guard let self, self.commandQueue.isEmpty == false else { return }
             self.commandQueue.removeFirst()
             self.delegate?.tvCommander(self, didWriteRemoteCommand: command)
             self.sendNextQueuedCommandOverWebSocket()
