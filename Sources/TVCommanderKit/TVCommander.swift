@@ -15,6 +15,7 @@ public protocol TVCommanderDelegate: AnyObject {
     func tvCommander(_ tvCommander: TVCommander, didUpdateAuthState authStatus: TVAuthStatus)
     func tvCommander(_ tvCommander: TVCommander, didWriteRemoteCommand command: TVRemoteCommand)
     func tvCommander(_ tvCommander: TVCommander, didEncounterError error: TVCommanderError)
+    func tvCommander(_ tvCommander: TVCommander, didReceiveToken token: TVAuthToken)
 }
 
 public class TVCommander: WebSocketDelegate {
@@ -309,6 +310,7 @@ extension TVCommander: TVWebSocketHandlerDelegate {
     
     func webSocketDidReadAuthToken(_ authToken: TVAuthToken) {
         tvConfig.token = authToken
+        delegate?.tvCommander(self, didReceiveToken: authToken)
     }
     
     func webSocketError(_ error: TVCommanderError) {
