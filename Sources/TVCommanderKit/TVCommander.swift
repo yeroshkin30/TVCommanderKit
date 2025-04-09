@@ -118,7 +118,7 @@ public class TVCommander: WebSocketDelegate {
 
             ]
         ]
-        let payload = ["method": "ms.remote.control", "params": params]
+        let payload = ["method": "ms.remote.control", "params": params] as [String: Any]
         let endodedParams = try? JSONSerialization.data(withJSONObject: payload)
 
         let paramsString = String(data: endodedParams!, encoding: .utf8)!
@@ -135,7 +135,7 @@ public class TVCommander: WebSocketDelegate {
             "to": "host"
         ]
 
-        let payload = ["method": "ms.channel.emit", "params": params]
+        let payload = ["method": "ms.channel.emit", "params": params] as [String: Any]
         let endodedParams = try? JSONSerialization.data(withJSONObject: payload)
 
         let paramsString = String(data: endodedParams!, encoding: .utf8)!
