@@ -46,7 +46,6 @@ class TVWebSocketHandler {
             webSocketDidReadPacket(packetData)
         } else {
             delegate?.webSocketError(.packetDataParsingFailed)
-            delegate?.webSocketDataReceived(text.asData)
         }
     }
 
