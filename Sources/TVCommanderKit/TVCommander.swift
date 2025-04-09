@@ -16,6 +16,7 @@ public protocol TVCommanderDelegate: AnyObject {
     func tvCommander(_ tvCommander: TVCommander, didWriteRemoteCommand command: TVRemoteCommand)
     func tvCommander(_ tvCommander: TVCommander, didEncounterError error: TVCommanderError)
     func tvCommander(_ tvCommander: TVCommander, didReceiveToken token: TVAuthToken)
+    func tvCommander(_ tvCommander: TVCommander, didReceiveData data: Data)
 }
 
 public class TVCommander: WebSocketDelegate {
@@ -82,27 +83,14 @@ public class TVCommander: WebSocketDelegate {
     // MARK: Send Remote Control Commands
 
     public func sendRemoteCommand(key: TVRemoteCommand.Params.ControlKey) {
-        guard isConnected else {
-            handleError(.remoteCommandNotConnectedToTV)
-            return
-        }
-        guard authStatus == .allowed else {
-            handleError(.remoteCommandAuthenticationStatusNotAllowed)
-            return
-        }
+        guard checkConnectionAllowed() else { return }
+
         sendCommandOverWebSocket(createRemoteCommand(key: key))
     }
 
     /// Send a text as text field input to the TV. Text will replace existing text in TV textfield.
     public func sendText(_ text: String, submit: Bool = false) {
-        guard isConnected else {
-            handleError(.remoteCommandNotConnectedToTV)
-            return
-        }
-        guard authStatus == .allowed else {
-            handleError(.remoteCommandAuthenticationStatusNotAllowed)
-            return
-        }
+        guard checkConnectionAllowed() else { return }
 
         let base64Text = Data(text.utf8).base64EncodedString()
 
@@ -116,15 +104,9 @@ public class TVCommander: WebSocketDelegate {
         sendCommandOverWebSocket(command)
     }
 
+    /// Send a mouse move command to the TV. x and y are deltas from the last mouse position.
     public func mouseMove(x: Int, y: Int) {
-        guard isConnected else {
-            handleError(.remoteCommandNotConnectedToTV)
-            return
-        }
-        guard authStatus == .allowed else {
-            handleError(.remoteCommandAuthenticationStatusNotAllowed)
-            return
-        }
+        guard checkConnectionAllowed() else { return }
 
         let params: [String: Any] = [
             "Cmd": "Move",
@@ -136,14 +118,42 @@ public class TVCommander: WebSocketDelegate {
 
             ]
         ]
-        let payload = ["method": "ms.remote.control", "params": params] as [String: Any]
+        let payload = ["method": "ms.remote.control", "params": params]
         let endodedParams = try? JSONSerialization.data(withJSONObject: payload)
 
         let paramsString = String(data: endodedParams!, encoding: .utf8)!
 
-        webSocket?.write(string: paramsString) { [weak self] in
+        webSocket?.write(string: paramsString)
+    }
 
+    public func fetchApplicationList() {
+        guard checkConnectionAllowed() else { return }
+
+        let params: [String: Any] = [
+            "data": "",
+            "event": "ed.installedApp.get",
+            "to": "host"
+        ]
+
+        let payload = ["method": "ms.channel.emit", "params": params]
+        let endodedParams = try? JSONSerialization.data(withJSONObject: payload)
+
+        let paramsString = String(data: endodedParams!, encoding: .utf8)!
+
+        webSocket?.write(string: paramsString)
+    }
+
+    private func checkConnectionAllowed() -> Bool {
+        guard isConnected else {
+            handleError(.remoteCommandNotConnectedToTV)
+            return false
         }
+        guard authStatus == .allowed else {
+            handleError(.remoteCommandAuthenticationStatusNotAllowed)
+            return false
+        }
+
+        return true
     }
 
     func dateAsString() -> String {
@@ -315,5 +325,10 @@ extension TVCommander: TVWebSocketHandlerDelegate {
     
     func webSocketError(_ error: TVCommanderError) {
         delegate?.tvCommander(self, didEncounterError: error)
+    }
+
+    func webSocketDataReceived(_ data: Data) {
+        delegate?.tvCommander(self, didReceiveData: data)
+        print("Data received: \(data)")
     }
 }
