@@ -152,6 +152,10 @@ extension TVApp {
     public static func youtube() -> TVApp {
         TVApp(id: "111299001912", name: "YouTube")
     }
+
+    public static func appleTV() -> TVApp {
+        TVApp(id: "3201807016597", name: "Apple TV")
+    }
 }
 
 // MARK: TVConnectionConfiguration

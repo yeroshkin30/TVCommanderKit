@@ -45,7 +45,7 @@ public class TVAppManager: TVAppManaging {
     }
 
     public func fetchStatus(for tvApp: TVApp, tvIPAddress: String) async throws -> TVAppStatus {
-        let url = try buildURL(tvApp: tvApp, tvIPAddress: tvIPAddress)
+        let url = try buildURL(tvAppID: tvApp.id, tvIPAddress: tvIPAddress)
         guard let data = try await networkManager.sendRequest(url: url) else {
             throw TVAppManagerError.noData
         }
@@ -53,12 +53,17 @@ public class TVAppManager: TVAppManaging {
     }
 
     public func launch(tvApp: TVApp, tvIPAddress: String) async throws {
-        let url = try buildURL(tvApp: tvApp, tvIPAddress: tvIPAddress)
+        let url = try buildURL(tvAppID: tvApp.id, tvIPAddress: tvIPAddress)
         try await networkManager.sendRequest(url: url, method: "POST")
     }
 
-    private func buildURL(tvApp: TVApp, tvIPAddress: String) throws -> URL {
-        if let url = urlBuilder.buildURL(tvIPAddress: tvIPAddress, tvAppId: tvApp.id) {
+    public func launch(appId: String, tvIPAddress: String) async throws {
+        let url = try buildURL(tvAppID: appId, tvIPAddress: tvIPAddress)
+        try await networkManager.sendRequest(url: url, method: "POST")
+    }
+
+    private func buildURL(tvAppID: String, tvIPAddress: String) throws -> URL {
+        if let url = urlBuilder.buildURL(tvIPAddress: tvIPAddress, tvAppId: tvAppID) {
             return url
         } else {
             throw TVAppManagerError.badURL(description: "Unable to build URL for IP: \(tvIPAddress)")

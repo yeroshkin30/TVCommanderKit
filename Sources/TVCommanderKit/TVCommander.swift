@@ -139,6 +139,26 @@ public class TVCommander: WebSocketDelegate {
         let endodedParams = try? JSONSerialization.data(withJSONObject: payload)
 
         let paramsString = String(data: endodedParams!, encoding: .utf8)!
+        webSocket?.write(string: paramsString)
+    }
+
+    /// Fetch the app icon for a specific application.
+    /// We receive path in response which we receive after `fetchApplicationList()` method.
+    public func fetchAppIcon(path: String) {
+        guard checkConnectionAllowed() else { return }
+
+        let params: [String: Any] = [
+            "data": [
+                "iconPath": path
+            ],
+            "event": "ed.apps.icon",
+            "to": "host"
+        ]
+
+        let payload = ["method": "ms.channel.emit", "params": params] as [String: Any]
+        let endodedParams = try? JSONSerialization.data(withJSONObject: payload)
+
+        let paramsString = String(data: endodedParams!, encoding: .utf8)!
 
         webSocket?.write(string: paramsString)
     }
@@ -156,7 +176,7 @@ public class TVCommander: WebSocketDelegate {
         return true
     }
 
-    func dateAsString() -> String {
+    private func dateAsString() -> String {
         let timestamp = Date().timeIntervalSince1970
         let timestampString = String(format: "%.6f", timestamp)
         return timestampString
