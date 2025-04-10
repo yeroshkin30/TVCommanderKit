@@ -156,6 +156,10 @@ extension TVApp {
     public static func appleTV() -> TVApp {
         TVApp(id: "3201807016597", name: "Apple TV")
     }
+
+    public static func browser() -> TVApp {
+        TVApp(id: "org.tizen.browser", name: "Internet Browser")
+    }
 }
 
 // MARK: TVConnectionConfiguration
