@@ -105,15 +105,17 @@ extension TV {
 extension TVApp {
     public static func allApps() -> [TVApp] {
         [
+            browser(),
+            youtube(),
+            appleTV(),
+            netflix(),
             espn(),
             hulu(),
             max(),
-            netflix(),
             paramountPlus(),
+            spotify(),
             plutoTV(),
             primeVideo(),
-            spotify(),
-            youtube()
         ]
     }
 
