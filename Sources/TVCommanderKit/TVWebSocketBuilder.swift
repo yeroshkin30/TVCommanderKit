@@ -38,7 +38,7 @@ class TVWebSocketBuilder {
 
     private func createWebSocket() -> WebSocket? {
         guard let urlRequest else { return nil }
-        let webSocket: WebSocket =
+        let webSocket: Starscream.WebSocket =
             // prioritize using custom engine (for tests/mocks/etc)
             engine.flatMap { .init(request: urlRequest, engine: $0) }
             // otherwise, default to using cert pinner

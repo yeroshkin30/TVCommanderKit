@@ -26,7 +26,7 @@ public class TVCommander: WebSocketDelegate {
     private(set) public var isConnected = false
     private let webSocketCreator: TVWebSocketCreator
     private let webSocketHandler = TVWebSocketHandler()
-    private var webSocket: WebSocket?
+    private var webSocket: Starscream.WebSocket?
     private var commandQueue = [TVRemoteCommand]()
 
     init(tvConfig: TVConnectionConfiguration, webSocketCreator: TVWebSocketCreator) {
